@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wink for Happiness</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MediaPipe Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <!-- Removed unused control_utils for faster loading -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start py-8">
+
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="loader mb-4"></div>
+        <div class="text-xl font-bold text-pink-500">Initializing AI...</div>
+        <div class="text-sm text-gray-400 mt-2">Please allow camera access</div>
+    </div>
+
+    <!-- Header -->
+    <div class="text-center mb-8 px-4 z-10">
+        <h1 class="text-4xl md:text-6xl text-white mb-2 tracking-wide">
+            Wink, to make your girl happy!
+        </h1>
+        <p class="text-gray-400 text-lg">Use your camera. Wink with one eye. Watch the magic.</p>
+    </div>
+
+    <!-- Main Content Grid - Changed to flex-col for vertical stacking -->
+    <div class="w-full max-w-xl px-4 flex flex-col gap-8 items-center justify-center">
+        
+        <!-- Camera Feed Section -->
+        <div class="flex flex-col items-center w-full">
+            <div id="camera-wrapper" class="canvas-container w-full aspect-[4/3] bg-black relative">
+                <video id="input_video" class="absolute inset-0 w-full h-full object-cover" playsinline></video>
+                <canvas id="output_canvas" class="absolute inset-0 w-full h-full object-cover"></canvas>
+                
+                <!-- Status Badge -->
+                <div id="status-badge" class="absolute top-4 right-4 bg-gray-800/80 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-white border border-gray-600 transition-colors z-20">
+                    Waiting for face...
+                </div>
+            </div>
+            <p class="mt-4 text-sm text-gray-500 font-mono">
+                <span id="debug-text">L: 0.00 | R: 0.00</span>
+            </p>
+        </div>
+
+        <!-- Reaction Image Section -->
+        <div class="flex flex-col items-center w-full">
+            <div class="relative w-full aspect-[4/3] rounded-3xl shadow-2xl border-4 border-gray-800 overflow-hidden bg-gray-900">
+                <!-- Neutral Image - Updated Placeholder -->
+                <img 
+                    src="images/Not-Happy.png" 
+                    alt="Neutral" 
+                    id="img-neutral"
+                    class="reaction-image visible-img"
+                >
+                <!-- Happy Image - Updated Placeholder -->
+                <img 
+                    src="images/Happy.png" 
+                    alt="Happy" 
+                    id="img-happy"
+                    class="reaction-image hidden-img"
+                >
+                
+                <!-- Overlay Gradient -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
+                
+                <div class="absolute bottom-6 left-6 text-white z-10">
+                    <h2 id="mood-text" class="text-3xl font-bold font-['Fredoka_One']">She's not Happy</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js" type="module"></script>
+</body>
+</html>
