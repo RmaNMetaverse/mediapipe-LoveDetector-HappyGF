@@ -13,6 +13,9 @@ Quick start
 
 Prerequisites: modern browser with webcam access.
 
+
+Run Online: https://rmanmetaverse.github.io/mediapipe-LoveDetector-HappyGF/
+
 Run Locally
 
 Clone the project on your system and use one of the options below:
