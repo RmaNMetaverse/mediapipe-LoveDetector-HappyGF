@@ -16,9 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // State
   let isWinking = false;
   let isModelLoaded = false;
+  let winkHoldCounter = 0; // require wink for 2+ frames to reduce noise
+  const WINK_HOLD_FRAMES = 2; // frames a wink must persist
 
   // Constants for Wink Detection
-  const WINK_THRESHOLD = 0.24;
+  // Mobile devices struggle with portrait video; use lower (more sensitive) threshold
+  const WINK_THRESHOLD_DESKTOP = 0.24;
+  const WINK_THRESHOLD_MOBILE = 0.18; // more sensitive for mobile
 
   // Face Mesh Landmarks for Eyes
   const LEFT_EYE = [33, 160, 158, 133, 153, 144];
@@ -74,15 +78,32 @@ document.addEventListener('DOMContentLoaded', () => {
       const rightEAR = getEAR(landmarks, RIGHT_EYE);
       debugText.innerText = `L: ${leftEAR.toFixed(2)} | R: ${rightEAR.toFixed(2)}`;
 
-      const leftClosed = leftEAR < WINK_THRESHOLD;
-      const rightClosed = rightEAR < WINK_THRESHOLD;
+      // Use mobile-specific threshold
+      const threshold = isMobile ? WINK_THRESHOLD_MOBILE : WINK_THRESHOLD_DESKTOP;
+      
+      // Log EAR values to console on mobile for debugging
+      if (isMobile) {
+        console.log(`[Mobile] L: ${leftEAR.toFixed(3)}, R: ${rightEAR.toFixed(3)}, Threshold: ${threshold.toFixed(3)}`);
+      }
+
+      const leftClosed = leftEAR < threshold;
+      const rightClosed = rightEAR < threshold;
 
       let currentlyWinking = false;
       if ((leftClosed && !rightClosed) || (!leftClosed && rightClosed)) {
         currentlyWinking = true;
       }
 
+      // Wink hold counter: require wink to persist for WINK_HOLD_FRAMES to reduce noise
       if (currentlyWinking) {
+        winkHoldCounter++;
+      } else {
+        winkHoldCounter = 0;
+      }
+
+      const winkConfirmed = winkHoldCounter >= WINK_HOLD_FRAMES;
+
+      if (winkConfirmed) {
         isWinking = true;
         statusBadge.innerText = 'WINK DETECTED!';
         statusBadge.className = 'absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20';
@@ -95,6 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         moodText.innerText = 'She is Happy! ❤️';
         moodText.className = "text-3xl font-bold font-['Fredoka_One'] text-pink-400";
+
+        if (isMobile) console.log('[Mobile] WINK CONFIRMED after', winkHoldCounter, 'frames');
       } else {
         isWinking = false;
         statusBadge.innerText = 'Looking for wink...';
