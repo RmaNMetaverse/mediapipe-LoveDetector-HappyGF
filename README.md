@@ -25,7 +25,7 @@ Prerequisites: modern browser with webcam access.
 
  
 
-**Run Online (github pages):** 
+**Run Online (github pages):**  https://rmanmetaverse.github.io/WinkDetector-HappyGF/
 
    
 **Run Locally**
